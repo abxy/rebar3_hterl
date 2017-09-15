@@ -1,0 +1,4 @@
+[{<<"hterl">>,
+  {git,"git://github.com/abxy/hterl.git",
+       {ref,"883d13b6448f664de2506a3c3fcd11d0e2026280"}},
+  0}].
