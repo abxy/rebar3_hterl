@@ -36,7 +36,6 @@ do(State) ->
     [begin
         Opts = rebar_app_info:opts(AppInfo),
         SourceDir = rebar_app_info:dir(AppInfo),
-        OutDir = SourceDir,
         HterlOpts = rebar_opts:get(Opts, hterl_opts, []),
 
         FoundFiles = rebar_utils:find_files(SourceDir, ".*\\.hterl\$"),
