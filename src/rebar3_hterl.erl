@@ -35,7 +35,7 @@ do(State) ->
     end,
     [begin
         Opts = rebar_app_info:opts(AppInfo),
-        SourceDir = rebar_app_info:dir(AppInfo),
+        SourceDir = filename:join(rebar_app_info:dir(AppInfo), "src"),
         FoundFiles = rebar_utils:find_files(SourceDir, ".*\\.hterl\$"),
         rebar_base_compiler:run(Opts, [], FoundFiles, fun do_compile/2)
     end || AppInfo <- Apps],
