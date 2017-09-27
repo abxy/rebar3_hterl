@@ -36,18 +36,20 @@ do(State) ->
     [begin
         Opts = rebar_app_info:opts(AppInfo),
         SourceDir = rebar_app_info:dir(AppInfo),
-        HterlOpts = rebar_opts:get(Opts, hterl_opts, []),
-
         FoundFiles = rebar_utils:find_files(SourceDir, ".*\\.hterl\$"),
-
-        CompileFun = fun(Source, HterlOpts1) ->
-            hterl:file(Source, HterlOpts1)
-        end,
-
-        rebar_base_compiler:run(HterlOpts, [], FoundFiles, CompileFun)
+        rebar_base_compiler:run(Opts, [], FoundFiles, fun do_compile/2)
     end || AppInfo <- Apps],
 
     {ok, State}.
+
+do_compile(Source, Opts) ->
+        HterlOpts = rebar_opts:get(Opts, hterl_opts, []),
+        case hterl:file(Source, HterlOpts) of
+            ok ->
+                ok;
+            error ->
+                rebar_base_compiler:error_tuple(Source, [], [], Opts)
+        end.
 
 -spec format_error(any()) ->  iolist().
 format_error(Reason) ->
