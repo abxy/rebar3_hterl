@@ -32,7 +32,7 @@ needed_files(_, FoundFiles, Mappings, AppInfo) ->
     FirstFiles = [],
 
     RestFiles = [Source || Source <- FoundFiles,
-                           rebar_compiler:needs_compile(Source, ".erl", Mappings)],
+                           rebar_compiler:needs_compile(Source, ".beam", Mappings)],
 
     HterlOpts = rebar_opts:get(rebar_app_info:opts(AppInfo), hterl_opts, []),
 
@@ -53,13 +53,12 @@ compile(Source, [{_, OutDir}], AllOpts, HterlOpts) ->
     end.
 
 target_base(OutDir, Source) ->
-    filename:join(OutDir, filename:basename(Source, ".erl")).
+    filename:join(OutDir, filename:basename(Source, ".hterl")).
 
 clean(Files, AppInfo) ->
     EbinDir = rebar_app_info:ebin_dir(AppInfo),
     [begin
-         Source = filename:basename(File, ".hterl"),
-         Target = target_base(EbinDir, Source) ++ ".beam",
+         Target = target_base(EbinDir, File) ++ ".beam",
          file:delete(Target)
      end || File <- Files].
 
