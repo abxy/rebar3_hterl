@@ -2,5 +2,6 @@
 
 -export([init/1]).
 
-init(State) ->
+init(State0) ->
+    State = rebar_state:append_compilers(State0, [rebar3_compiler_hterl]),
     {ok, State}.

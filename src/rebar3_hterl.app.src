@@ -7,9 +7,7 @@
         stdlib,
         hterl
     ]},
-    {env,[
-        {compilers, [rebar3_compiler_hterl]}
-    ]},
+    {env,[]},
     {modules, []},
     {maintainers, ["Alexander Mihajlovic"]},
     {licenses, []},
