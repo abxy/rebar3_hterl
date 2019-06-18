@@ -12,19 +12,26 @@ context(AppInfo) ->
     EbinDir = rebar_app_info:ebin_dir(AppInfo),
     Mappings = [{".beam", EbinDir}],
 
-    Dir = rebar_app_info:dir(AppInfo),
-    Mappings = [{".erl", filename:join([Dir, "src"])}],
-    #{src_dirs => ["src"],
-      include_dirs => [],
+    OutDir = rebar_app_info:dir(AppInfo),
+    SrcDirs = rebar_dir:src_dirs(rebar_app_info:opts(AppInfo), ["src"]),
+    ExistingSrcDirs = lists:filter(fun(D) ->
+                                           ec_file:is_dir(filename:join(OutDir, D))
+                                   end, SrcDirs),
+
+    RebarOpts = rebar_app_info:opts(AppInfo),
+    ErlOpts = rebar_opts:erl_opts(RebarOpts),
+    ErlOptIncludes = proplists:get_all_values(i, ErlOpts),
+    InclDirs = lists:map(fun(Incl) -> filename:absname(Incl) end, ErlOptIncludes),
+
+    #{src_dirs => ExistingSrcDirs,
+      include_dirs => [filename:join([OutDir, "include"]) | InclDirs],
       src_ext => ".hterl",
       out_mappings => Mappings}.
 
 needed_files(_, FoundFiles, Mappings, AppInfo) ->
     FirstFiles = [],
 
-    %% Remove first files from found files
     RestFiles = [Source || Source <- FoundFiles,
-                           not lists:member(Source, FirstFiles),
                            rebar_compiler:needs_compile(Source, ".erl", Mappings)],
 
     HterlOpts = rebar_opts:get(rebar_app_info:opts(AppInfo), hterl_opts, []),
@@ -45,10 +52,16 @@ compile(Source, [{_, OutDir}], AllOpts, HterlOpts) ->
             error_tuple(Source, Es, Ws, AllOpts, HterlOpts)
     end.
 
-clean(HterlFiles, _AppInfo) ->
-    rebar_file_utils:delete_each(
-      [rebar_utils:to_list(re:replace(F, "\\.hterl$", ".erl", [unicode]))
-       || F <- HterlFiles]).
+target_base(OutDir, Source) ->
+    filename:join(OutDir, filename:basename(Source, ".erl")).
+
+clean(Files, AppInfo) ->
+    EbinDir = rebar_app_info:ebin_dir(AppInfo),
+    [begin
+         Source = filename:basename(File, ".hterl"),
+         Target = target_base(EbinDir, Source) ++ ".beam",
+         file:delete(Target)
+     end || File <- Files].
 
 error_tuple(Module, Es, Ws, AllOpts, Opts) ->
     FormattedEs = format_error_sources(Es, AllOpts),
