@@ -42,7 +42,7 @@ dependencies(_, _, _) ->
     [].
 
 compile(Source, [{_, OutDir}], AllOpts, HterlOpts) ->
-    case hterl:file(Source, [{outdir, OutDir}, HterlOpts]) of
+    case hterl:file(Source, [{outdir, OutDir} | HterlOpts]) of
         ok ->
             ok;
         {ok, Ws} ->
