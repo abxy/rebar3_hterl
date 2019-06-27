@@ -1,15 +1,17 @@
 {application, rebar3_hterl,
-    [{description, "A rebar plugin"},
-    {vsn, "0.1.0"},
+    [{description, "A rebar compiler plugin for Hypertext Erlang (hterl)"},
+    {vsn, "0.2.0"},
     {registered, []},
     {applications, [
         kernel,
         stdlib,
         hterl
     ]},
-    {env,[]},
+    {env, []},
     {modules, []},
-    {maintainers, ["Alexander Mihajlovic"]},
-    {licenses, []},
-    {links, []}
+    {licenses, ["Apache-2.0"]},
+    {links, [
+        {"GitHub (this plugin)", "https://github.com/abxy/rebar3_hterl"},
+        {"GitHub (hterl)", "https://github.com/abxy/hterl"}
+    ]}
 ]}.
